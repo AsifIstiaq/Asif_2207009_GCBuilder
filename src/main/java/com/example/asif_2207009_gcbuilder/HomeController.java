@@ -1,6 +1,7 @@
 package com.example.asif_2207009_gcbuilder;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,7 +20,7 @@ public class HomeController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/asif_2207009_gcbuilder/course_entry.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root, 1000.0, 650.0);
-        scene.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);
     }
