@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Button?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.asif_2207009_gcbuilder.ResultController">
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10" />
+            </padding>
+            <Label text="GPA Result" style="-fx-font-size:22px; -fx-font-weight:bold; -fx-text-fill:#1a1a1a;" />
+            <Separator />
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20" />
+            </padding>
+            <VBox spacing="8" style="-fx-border-color:#cccccc; -fx-border-width:1; -fx-padding:15; -fx-background-color:#f9f9f9;">
+                <Label fx:id="totalCreditsLabel" text="Total Credits: 0.00" style="-fx-font-size:14px;" />
+                <Label fx:id="gpaLabel" text="Weighted GPA: 0.00" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#0066cc;" />
+            </VBox>
+            <Separator />
+            <Label text="Course Details:" style="-fx-font-size:14px; -fx-font-weight:bold;" />
+            <VBox fx:id="coursesBox" spacing="8" />
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="10" right="20" bottom="20" left="20" />
+            </padding>
+            <Button text="Back to Courses" onAction="#onBack" style="-fx-padding:10; -fx-font-size:12px;" />
+        </HBox>
+    </bottom>
+    <padding>
+        <Insets top="10" right="12" bottom="12" left="12" />
+    </padding>
+</BorderPane>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>

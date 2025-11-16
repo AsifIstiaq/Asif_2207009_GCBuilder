@@ -4,10 +4,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class CourseEntryController {
 
@@ -149,7 +157,20 @@ public class CourseEntryController {
     }
 
     @FXML
-    private void onCalculate(ActionEvent event) {
+    private void onCalculate(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/asif_2207009_gcbuilder/result.fxml"));
+        Parent root = loader.load();
+        ResultController controller = loader.getController();
+        double totalCredits = courses.stream().mapToDouble(Course::getCredit).sum();
+        double totalPoints = courses.stream().mapToDouble(c -> c.getCredit() * gradePoints.getOrDefault(c.getGrade(), 0.0)).sum();
+        double gpa = totalCredits > 0 ? totalPoints / totalCredits : 0.0;
+
+        controller.setData(courses, totalCredits, gpa, gradePoints);
+
+        Scene scene = new Scene(root, 950, 750);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
     }
 
     @FXML
