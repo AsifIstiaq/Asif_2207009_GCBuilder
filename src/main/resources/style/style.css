@@ -20,3 +20,73 @@ root {
 .button:pressed {
     -fx-background-color: #0066cc;
 }
+
+.course-entry {
+    -fx-padding: 12px;
+    -fx-background-color: WhiteSmoke;
+    -fx-border-color: LightSteelBlue;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 12px;
+}
+
+.table-view {
+    -fx-border-color: LightSteelBlue;
+    -fx-padding: 5;
+}
+
+.table-view:focused {
+    -fx-border-color: DodgerBlue;
+}
+
+.table-row-cell {
+    -fx-padding: 8;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: AliceBlue;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: SteelBlue;
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-border-color: LightGray;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-padding: 6;
+    -fx-font-size: 12px;
+}
+
+.text-field:focused {
+    -fx-border-color: DodgerBlue;
+    -fx-border-width: 2;
+}
+
+.combo-box {
+    -fx-border-color: LightGray;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-padding: 6;
+}
+
+.combo-box:focused {
+    -fx-border-color: DodgerBlue;
+    -fx-border-width: 2;
+}
+
+Label {
+    -fx-font-size: 13px;
+}
+
+.separator {
+    -fx-padding: 8;
+}
+
+.vbox,
+.hbox {
+    -fx-spacing: 10;
+}
