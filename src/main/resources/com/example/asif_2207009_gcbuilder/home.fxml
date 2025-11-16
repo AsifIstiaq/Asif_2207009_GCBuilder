@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.asif_2207009_gcbuilder.HomeController">
+    <top>
+        <Label text="GPA Calculator" style="-fx-font-size:24px; -fx-padding:20px;" />
+    </top>
+    <center>
+        <VBox spacing="20" alignment="CENTER">
+            <Label text="Welcome to GPA Calculator! Press the below button to add courses and compute your weighted GPA." wrapText="true"/>
+            <Button text="Start GPA Calculator" onAction="#onStart" />
+        </VBox>
+    </center>
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
+</BorderPane>

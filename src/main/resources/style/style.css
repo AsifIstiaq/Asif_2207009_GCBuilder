@@ -1,0 +1,22 @@
+root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 13px;
+}
+
+.button {
+    -fx-background-color: #1e90ff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #8fcfff;
+}
+
+.button:pressed {
+    -fx-background-color: #0066cc;
+}
