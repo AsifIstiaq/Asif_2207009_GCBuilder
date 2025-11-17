@@ -49,7 +49,12 @@
             <ComboBox fx:id="gradeCombo" GridPane.rowIndex="5" GridPane.columnIndex="1" />
 
             <HBox spacing="8" GridPane.rowIndex="6" GridPane.columnIndex="1" alignment="CENTER_LEFT">
-                <Button text="Add Course" onAction="#onAdd" />
+                <Button text="Add Course" fx:id="addButton" onAction="#onAdd" />
+                <Button text="Edit Selected" fx:id="updateButton" onAction="#onUpdate" />
+                <Button text="Delete Selected" onAction="#onRemove" />
+                <Separator orientation="VERTICAL" />
+                <Button text="Export Report" onAction="#onExport" />
+                <Button text="Reset All" fx:id="resetButton" onAction="#onReset" />
             </HBox>
 
             <Label text="Entered Courses:" style="-fx-font-weight:bold;" GridPane.rowIndex="7" GridPane.columnIndex="0" />

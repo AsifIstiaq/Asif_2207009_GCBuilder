@@ -11,7 +11,7 @@
     </top>
     <center>
         <VBox spacing="20" alignment="CENTER">
-            <Label text="Welcome to GPA Calculator! Press the below button to add courses and compute your weighted GPA." wrapText="true"/>
+            <Label text="Welcome to GPA Calculator! Press the below button to add courses and compute your GPA." wrapText="true"/>
             <Button text="Start GPA Calculator" onAction="#onStart" />
         </VBox>
     </center>
