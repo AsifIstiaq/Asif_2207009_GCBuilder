@@ -3,10 +3,12 @@ package com.example.asif_2207009_gcbuilder;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -20,25 +22,47 @@ public class ResultController {
     @FXML private Label totalCreditsLabel;
     @FXML private Label gpaLabel;
 
-    public void setData(ObservableList<Course> courses, double totalCredits, double gpa, Map<String, Double> gradePoints) {
-        totalCreditsLabel.setText(String.format("Total Credits: %.2f", totalCredits));
-        gpaLabel.setText(String.format("GPA: %.2f", gpa));
+public void setData(ObservableList<Course> courses, double totalCredits, double gpa, Map<String, Double> gradePoints) {
+    totalCreditsLabel.setText(String.format("Total Credits: %.2f", totalCredits));
+    gpaLabel.setText(String.format("GPA: %.2f", gpa));
 
-        coursesBox.getChildren().clear();
-        for (int i = 0; i < courses.size(); i++) {
-            Course c = courses.get(i);
-            double gradePoint = gradePoints.getOrDefault(c.getGrade(), 0.0);
-            double weightedPoints = c.getCredit() * gradePoint;
+    coursesBox.getChildren().clear();
 
-            Label courseLabel = new Label(
-                    String.format("%d. %s (%s) - %.2f credits - Grade: %s (%.1f pts) - Weighted GPA: %.2f - Teachers: %s, %s",
-                            i + 1, c.getName(), c.getCode(), c.getCredit(), c.getGrade(), gradePoint, weightedPoints, c.getTeacher1(), c.getTeacher2())
-            );
-            courseLabel.setWrapText(true);
-            courseLabel.getStyleClass().add("course-entry");
-            coursesBox.getChildren().add(courseLabel);
-        }
+    for (int i = 0; i < courses.size(); i++) {
+        Course c = courses.get(i);
+        double gradePoint = gradePoints.getOrDefault(c.getGrade(), 0.0);
+        double weightedPoints = c.getCredit() * gradePoint;
+
+        HBox row = new HBox(15);
+        row.setStyle("-fx-padding:5;");
+        row.setAlignment(Pos.CENTER);
+
+        Label snLabel = new Label(String.valueOf(i + 1));
+        snLabel.setPrefWidth(40); snLabel.setAlignment(Pos.CENTER);
+
+        Label nameLabel = new Label(c.getName());
+        nameLabel.setPrefWidth(150); nameLabel.setAlignment(Pos.CENTER);
+
+        Label codeLabel = new Label(c.getCode());
+        codeLabel.setPrefWidth(80); codeLabel.setAlignment(Pos.CENTER);
+
+        Label creditLabel = new Label(String.format("%.2f", c.getCredit()));
+        creditLabel.setPrefWidth(60); creditLabel.setAlignment(Pos.CENTER);
+
+        Label gpaLabelCol = new Label(String.format("%.2f", gradePoint));
+        gpaLabelCol.setPrefWidth(50); gpaLabelCol.setAlignment(Pos.CENTER);
+
+        Label weightedGpaLabel = new Label(String.format("%.2f", weightedPoints));
+        weightedGpaLabel.setPrefWidth(80); weightedGpaLabel.setAlignment(Pos.CENTER);
+
+        Label teachersLabel = new Label(c.getTeacher1() + ", " + c.getTeacher2());
+        teachersLabel.setPrefWidth(200); teachersLabel.setAlignment(Pos.CENTER);
+
+        row.getChildren().addAll(snLabel, nameLabel, codeLabel, creditLabel, gpaLabelCol, weightedGpaLabel, teachersLabel);
+        coursesBox.getChildren().add(row);
     }
+}
+
 
     @FXML
     private void onBack(javafx.event.ActionEvent event) throws IOException {

@@ -175,15 +175,6 @@ public class CourseEntryController {
             return;
         }
 
-        int codeInt;
-        try {
-            codeInt = Integer.parseInt(code);
-            if (codeInt <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException ex) {
-            showAlert(Alert.AlertType.ERROR, "Validation", "Code must be a positive integer number.");
-            return;
-        }
-
         Course c = new Course(name, code, credit, t1, t2, grade);
         courses.add(c);
         clearInputs();
@@ -225,15 +216,6 @@ public class CourseEntryController {
         if (required > 0 && adjustedSum > required + 1e-6) {
             showAlert(Alert.AlertType.ERROR, "Credit Limit Exceeded",
                     "Editing this course exceeds the required total credit.");
-            return;
-        }
-
-        int codeInt;
-        try {
-            codeInt = Integer.parseInt(code);
-            if (codeInt <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException ex) {
-            showAlert(Alert.AlertType.ERROR, "Validation", "Code must be a positive integer number (ex: 101).");
             return;
         }
 

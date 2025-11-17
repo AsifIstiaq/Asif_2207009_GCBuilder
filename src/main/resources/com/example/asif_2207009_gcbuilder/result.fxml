@@ -1,46 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Separator?>
+
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.asif_2207009_gcbuilder.ResultController">
-    <top>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10" />
-            </padding>
-            <Label text="GPA Result" style="-fx-font-size:22px; -fx-font-weight:bold; -fx-text-fill:#1a1a1a;" />
-            <Separator />
-        </VBox>
-    </top>
+<BorderPane style="-fx-background-color: linear-gradient(to bottom, #f0f4f8, #dbe9f4);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.asif_2207009_gcbuilder.ResultController">
+
     <center>
-        <VBox spacing="15">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20" />
-            </padding>
-            <VBox spacing="8" style="-fx-border-color:#cccccc; -fx-border-width:1; -fx-padding:15; -fx-background-color:#f9f9f9;">
-                <Label fx:id="totalCreditsLabel" text="Total Credits: 0.00" style="-fx-font-size:14px;" />
-                <Label fx:id="gpaLabel" text="Weighted GPA: 0.00" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#0066cc;" />
-            </VBox>
-            <Separator />
-            <Label text="Course Details:" style="-fx-font-size:14px; -fx-font-weight:bold;" />
-            <VBox fx:id="coursesBox" spacing="8" />
-        </VBox>
-    </center>
-    <bottom>
-        <HBox spacing="10" alignment="CENTER">
-            <padding>
-                <Insets top="10" right="20" bottom="20" left="20" />
-            </padding>
-            <Button text="Back to Courses" onAction="#onBack" style="-fx-padding:10; -fx-font-size:12px;" />
-        </HBox>
-    </bottom>
-    <padding>
-        <Insets top="10" right="12" bottom="12" left="12" />
-    </padding>
-</BorderPane>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color:transparent;">
+            <VBox alignment="TOP_CENTER" spacing="25" style="-fx-padding:30 40 30 40;">
 
+                <VBox spacing="25" style="-fx-border-color:#8b7355; -fx-border-width:3; -fx-padding:40;                                            -fx-background-color:#fffef9; -fx-background-radius:12;                                            -fx-border-radius:12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 8);">
+
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label style="-fx-font-size:18px; -fx-font-weight:bold; -fx-text-fill:#8b7355;" text="✦ ACADEMIC EXCELLENCE ✦" />
+                        <Label style="-fx-font-size:30px; -fx-font-weight:bold; -fx-text-fill:#1a1a1a;" text="GPA Achievement Report" />
+                        <Separator style="-fx-padding:10 0;" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" prefHeight="28.0" prefWidth="360.0" spacing="15" style="-fx-background-color: #f5f1ed; -fx-padding: 30; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #d4c5b9; -fx-border-width: 2;">
+                        <Label fx:id="gpaLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #c41e3a;" text="GPA: 0.00" />
+                        <HBox alignment="CENTER" spacing="30">
+                            <Label fx:id="totalCreditsLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0066cc;" text="Total Credits: 0.00" />
+                        </HBox>
+                    </VBox>
+
+                    <HBox alignment="CENTER" spacing="10">
+                        <Region prefWidth="50" />
+                        <Label style="-fx-font-size:22px; -fx-text-fill:#8b7355;" text="◆" />
+                        <Region prefWidth="50" />
+                    </HBox>
+
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:#8b7355; -fx-underline:true;" text="DETAILED COURSE BREAKDOWN" textAlignment="CENTER" />
+
+                        <HBox alignment="CENTER" spacing="15" style="-fx-padding:5 10; -fx-background-color:#f0f0f0; -fx-border-color:#d0d0d0; -fx-border-width:0 0 1 0;">
+                            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="35.0" style="-fx-font-size:13px; -fx-font-weight:bold;" text="S/N" />
+                            <Label alignment="CENTER" prefHeight="19.0" prefWidth="114.0" style="-fx-font-size:13px; -fx-font-weight:bold;" text="Course Name" />
+                            <Label prefWidth="80" style="-fx-font-size:13px; -fx-font-weight:bold;" text="Course Code" />
+                            <Label alignment="CENTER" prefWidth="60" style="-fx-font-size:13px; -fx-font-weight:bold;" text="Credit" />
+                            <Label alignment="CENTER" prefWidth="60" style="-fx-font-size:13px; -fx-font-weight:bold;" text="GPA" />
+                            <Label alignment="CENTER" prefHeight="19.0" prefWidth="114.0" style="-fx-font-size:13px; -fx-font-weight:bold;" text="Weighted GPA" />
+                            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="118.0" style="-fx-font-size:13px; -fx-font-weight:bold;" text="Teachers" />
+                        </HBox>
+
+                        <VBox fx:id="coursesBox" alignment="CENTER" spacing="5" style="-fx-font-size:13px ;-fx-font-weight:600 ;-fx-padding:5; -fx-background-color:#ffffff; -fx-border-color:#e0e0e0; -fx-border-width:1; -fx-border-radius:6; -fx-background-radius:6;">
+                        </VBox>
+                    </VBox>
+
+                    <HBox alignment="CENTER" spacing="10">
+                        <Region prefWidth="50" />
+                        <Label style="-fx-font-size:22px; -fx-text-fill:#8b7355;" text="◆" />
+                        <Region prefWidth="50" />
+                    </HBox>
+
+                </VBox>
+
+                <HBox alignment="CENTER" spacing="15">
+                    <Button onAction="#onBack" text="← Back to Courses" />
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
