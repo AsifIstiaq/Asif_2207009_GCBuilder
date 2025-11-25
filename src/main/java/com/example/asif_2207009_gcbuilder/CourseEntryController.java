@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -63,17 +64,21 @@ public class CourseEntryController {
         CourseFetch fetchService = new CourseFetch();
 
         fetchService.setOnSucceeded(event -> {
+            Platform.runLater(() -> {
             ObservableList<Course> loadedCourses = fetchService.getValue();
             courses.clear();
             courses.addAll(loadedCourses);
             System.out.println("✓ Courses loaded into UI: " + courses.size());
+            });
         });
 
         fetchService.setOnFailed(event -> {
             Throwable error = fetchService.getException();
             System.err.println("✗ Failed to load courses: " + error.getMessage());
+            Platform.runLater(() -> {
             showAlert(Alert.AlertType.ERROR, "Database Error",
                     "Failed to load courses from database: " + error.getMessage());
+            });
         });
         fetchService.start();
     }
@@ -197,17 +202,21 @@ public class CourseEntryController {
         CourseSave saveTask = new CourseSave(c);
 
         saveTask.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
             int generatedId = saveTask.getValue();
             c.setId(generatedId);
             courses.add(c);
             clearInputs();
             showAlert(Alert.AlertType.INFORMATION, "Success", "Course added successfully!");
+            });
         });
 
         saveTask.setOnFailed(e -> {
             Throwable error = saveTask.getException();
+            Platform.runLater(() -> {
             showAlert(Alert.AlertType.ERROR, "Database Error",
                     "Failed to save course: " + error.getMessage());
+            });
         });
 
         new Thread(saveTask).start();
@@ -261,6 +270,7 @@ public class CourseEntryController {
         CourseUpdate updateTask = new CourseUpdate(selectedCourse);
 
         updateTask.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
         courseTable.refresh();
         courseTable.getSelectionModel().clearSelection();
         clearInputs();
@@ -268,11 +278,14 @@ public class CourseEntryController {
         if (courses.isEmpty())
             updateButton.setDisable(true);
         showAlert(Alert.AlertType.INFORMATION, "Success", "Course edited successfully!");
+            });
         });
             updateTask.setOnFailed(e -> {
                 Throwable error = updateTask.getException();
+                Platform.runLater(() -> {
                 showAlert(Alert.AlertType.ERROR, "Database Error",
                         "Failed to edit course: " + error.getMessage());
+                });
             });
 
             new Thread(updateTask).start();
@@ -289,6 +302,7 @@ public class CourseEntryController {
         CourseDelete deleteTask = new CourseDelete(sel.getId(), sel.getName());
 
         deleteTask.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
         courseTable.refresh();
         courseTable.getSelectionModel().clearSelection();
         courses.remove(sel);
@@ -296,12 +310,15 @@ public class CourseEntryController {
         selectedCourse = null;
         updateButton.setDisable(true);
         showAlert(Alert.AlertType.INFORMATION, "Delete", "Course deleted successfully!");
+            });
         });
 
         deleteTask.setOnFailed(e -> {
             Throwable error = deleteTask.getException();
+            Platform.runLater(() -> {
             showAlert(Alert.AlertType.ERROR, "Database Error",
                     "Failed to delete course: " + error.getMessage());
+            });
         });
 
         new Thread(deleteTask).start();
@@ -323,18 +340,22 @@ public class CourseEntryController {
             CourseReset resetTask = new CourseReset();
 
             resetTask.setOnSucceeded(e -> {
+                Platform.runLater(() -> {
             courses.clear();
             clearInputs();
             totalCreditsField.clear();
             selectedCourse = null;
             updateButton.setDisable(true);
             showAlert(Alert.AlertType.INFORMATION, "Reset", "All courses cleared!");
+                });
             });
 
             resetTask.setOnFailed(e -> {
                 Throwable error = resetTask.getException();
+                Platform.runLater(() -> {
                 showAlert(Alert.AlertType.ERROR, "Database Error",
                         "Failed to reset courses: " + error.getMessage());
+                });
             });
 
             new Thread(resetTask).start();
