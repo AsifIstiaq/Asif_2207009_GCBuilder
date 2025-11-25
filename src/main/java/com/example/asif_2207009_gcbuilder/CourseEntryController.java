@@ -49,8 +49,6 @@ public class CourseEntryController {
 
     private final ObservableList<Course> courses = FXCollections.observableArrayList();
     private Course selectedCourse = null;
-
-    // grade mapping
     private final Map<String, Double> gradePoints = new HashMap<>();
 
     @FXML
@@ -58,6 +56,26 @@ public class CourseEntryController {
         initializeGradePoints();
         setupUI();
         setupTableListener();
+        loadCoursesFromDatabase();
+    }
+
+    private void loadCoursesFromDatabase() {
+        CourseFetch fetchService = new CourseFetch();
+
+        fetchService.setOnSucceeded(event -> {
+            ObservableList<Course> loadedCourses = fetchService.getValue();
+            courses.clear();
+            courses.addAll(loadedCourses);
+            System.out.println("✓ Courses loaded into UI: " + courses.size());
+        });
+
+        fetchService.setOnFailed(event -> {
+            Throwable error = fetchService.getException();
+            System.err.println("✗ Failed to load courses: " + error.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Database Error",
+                    "Failed to load courses from database: " + error.getMessage());
+        });
+        fetchService.start();
     }
 
     private void initializeGradePoints() {
@@ -176,9 +194,23 @@ public class CourseEntryController {
         }
 
         Course c = new Course(name, code, credit, t1, t2, grade);
-        courses.add(c);
-        clearInputs();
-        showAlert(Alert.AlertType.INFORMATION, "Success", "Course added successfully!");
+        CourseSave saveTask = new CourseSave(c);
+
+        saveTask.setOnSucceeded(e -> {
+            int generatedId = saveTask.getValue();
+            c.setId(generatedId);
+            courses.add(c);
+            clearInputs();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Course added successfully!");
+        });
+
+        saveTask.setOnFailed(e -> {
+            Throwable error = saveTask.getException();
+            showAlert(Alert.AlertType.ERROR, "Database Error",
+                    "Failed to save course: " + error.getMessage());
+        });
+
+        new Thread(saveTask).start();
     }
 
     @FXML
@@ -226,6 +258,9 @@ public class CourseEntryController {
         selectedCourse.setTeacher2(t2);
         selectedCourse.setGrade(grade);
 
+        CourseUpdate updateTask = new CourseUpdate(selectedCourse);
+
+        updateTask.setOnSucceeded(e -> {
         courseTable.refresh();
         courseTable.getSelectionModel().clearSelection();
         clearInputs();
@@ -233,6 +268,14 @@ public class CourseEntryController {
         if (courses.isEmpty())
             updateButton.setDisable(true);
         showAlert(Alert.AlertType.INFORMATION, "Success", "Course edited successfully!");
+        });
+            updateTask.setOnFailed(e -> {
+                Throwable error = updateTask.getException();
+                showAlert(Alert.AlertType.ERROR, "Database Error",
+                        "Failed to edit course: " + error.getMessage());
+            });
+
+            new Thread(updateTask).start();
     }
 
     @FXML
@@ -242,6 +285,10 @@ public class CourseEntryController {
             showAlert(Alert.AlertType.WARNING, "Delete", "Select a course to delete.");
             return;
         }
+
+        CourseDelete deleteTask = new CourseDelete(sel.getId(), sel.getName());
+
+        deleteTask.setOnSucceeded(e -> {
         courseTable.refresh();
         courseTable.getSelectionModel().clearSelection();
         courses.remove(sel);
@@ -249,6 +296,15 @@ public class CourseEntryController {
         selectedCourse = null;
         updateButton.setDisable(true);
         showAlert(Alert.AlertType.INFORMATION, "Delete", "Course deleted successfully!");
+        });
+
+        deleteTask.setOnFailed(e -> {
+            Throwable error = deleteTask.getException();
+            showAlert(Alert.AlertType.ERROR, "Database Error",
+                    "Failed to delete course: " + error.getMessage());
+        });
+
+        new Thread(deleteTask).start();
     }
 
     @FXML
@@ -264,12 +320,24 @@ public class CourseEntryController {
         Optional<ButtonType> result = confirm.showAndWait();
 
         if (result.isPresent() && result.get() == ButtonType.OK) {
+            CourseReset resetTask = new CourseReset();
+
+            resetTask.setOnSucceeded(e -> {
             courses.clear();
             clearInputs();
             totalCreditsField.clear();
             selectedCourse = null;
             updateButton.setDisable(true);
             showAlert(Alert.AlertType.INFORMATION, "Reset", "All courses cleared!");
+            });
+
+            resetTask.setOnFailed(e -> {
+                Throwable error = resetTask.getException();
+                showAlert(Alert.AlertType.ERROR, "Database Error",
+                        "Failed to reset courses: " + error.getMessage());
+            });
+
+            new Thread(resetTask).start();
         }
     }
 
