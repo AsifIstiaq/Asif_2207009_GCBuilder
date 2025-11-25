@@ -10,6 +10,7 @@ module com.example.asif_2207009_gcbuilder {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
 
     opens com.example.asif_2207009_gcbuilder to javafx.fxml;
     exports com.example.asif_2207009_gcbuilder;

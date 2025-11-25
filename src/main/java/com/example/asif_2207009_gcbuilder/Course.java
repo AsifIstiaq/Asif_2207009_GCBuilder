@@ -3,6 +3,7 @@ package com.example.asif_2207009_gcbuilder;
 import javafx.beans.property.*;
 
 public class Course {
+    private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty name = new SimpleStringProperty();
     private final StringProperty code = new SimpleStringProperty();
     private final DoubleProperty credit = new SimpleDoubleProperty();
@@ -20,6 +21,20 @@ public class Course {
         setTeacher2(teacher2);
         setGrade(grade);
     }
+
+    public Course(int id, String name, String code, double credit, String teacher1, String teacher2, String grade) {
+        setId(id);
+        setName(name);
+        setCode(code);
+        setCredit(credit);
+        setTeacher1(teacher1);
+        setTeacher2(teacher2);
+        setGrade(grade);
+    }
+
+    public int getId() { return id.get(); }
+    public void setId(int value) { id.set(value); }
+    public IntegerProperty idProperty() { return id; }
 
     public String getName() { return name.get(); }
     public void setName(String value) { name.set(value); }
