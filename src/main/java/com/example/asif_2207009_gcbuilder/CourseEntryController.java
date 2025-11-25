@@ -58,6 +58,7 @@ public class CourseEntryController {
         setupUI();
         setupTableListener();
         loadCoursesFromDatabase();
+        loadLastCourse();
     }
 
     private void loadCoursesFromDatabase() {
@@ -81,6 +82,24 @@ public class CourseEntryController {
             });
         });
         fetchService.start();
+    }
+
+    private void loadLastCourse() {
+        new Thread(() -> {
+            com.example.asif_2207009_gcbuilder.Course lastCourse = com.example.asif_2207009_gcbuilder.DatabaseHelper.getLastCourse();
+
+            if (lastCourse != null) {
+                javafx.application.Platform.runLater(() -> {
+                    nameField.setText(lastCourse.getName());
+                    codeField.setText(lastCourse.getCode());
+                    creditField.setText(String.valueOf(lastCourse.getCredit()));
+                    teacher1Field.setText(lastCourse.getTeacher1());
+                    teacher2Field.setText(lastCourse.getTeacher2());
+                    gradeCombo.getSelectionModel().select(lastCourse.getGrade());
+                    System.out.println("✓ Form pre-filled with last course: " + lastCourse.getName());
+                });
+            }
+        }).start();
     }
 
     private void initializeGradePoints() {

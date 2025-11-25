@@ -1,6 +1,5 @@
 package com.example.asif_2207009_gcbuilder;
 
-import com.example.asif_2207009_gcbuilder.Course;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -214,6 +213,35 @@ public class DatabaseHelper {
             System.err.println("✗ Failed to delete all courses: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static Course getLastCourse() {
+        String sql = "SELECT id, name, code, credit, teacher1, teacher2, grade FROM courses ORDER BY id DESC LIMIT 1";
+
+        try (PreparedStatement pstmt = getConnection().prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                Course course = new Course(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("code"),
+                        rs.getDouble("credit"),
+                        rs.getString("teacher1"),
+                        rs.getString("teacher2"),
+                        rs.getString("grade")
+                );
+                System.out.println("✓ Last course loaded: " + course.getName() + " (ID: " + course.getId() + ")");
+                return course;
+            } else {
+                System.out.println("ℹ No courses found in database");
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Failed to retrieve last course: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 }
