@@ -36,6 +36,16 @@ public class DatabaseHelper {
     private static final String SELECT_COURSE_BY_ID =
             "SELECT id, name, code, credit, teacher1, teacher2, grade FROM courses WHERE id = ?";
 
+    private static final String CREATE_RESULTS_TABLE =
+            "CREATE TABLE IF NOT EXISTS results (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "total_credits REAL NOT NULL, " +
+                    "gpa REAL NOT NULL, " +
+                    "required_credits REAL NOT NULL, " +
+                    "timestamp INTEGER NOT NULL, " +
+                    "courses_json TEXT NOT NULL" +
+                    ")";
+
     public static void initializeDatabase() {
         try {
             if (connection == null || connection.isClosed()) {
@@ -45,14 +55,14 @@ public class DatabaseHelper {
             }
         } catch (SQLException e) {
             System.err.println("✗ Database initialization failed: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     private static void createTables() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(CREATE_TABLE);
-            System.out.println("✓ Courses table ready");
+            stmt.execute(CREATE_RESULTS_TABLE);
+            System.out.println("✓ Courses and results tables ready");
         }
     }
 
@@ -78,7 +88,7 @@ public class DatabaseHelper {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int generatedId = generatedKeys.getInt(1);
-                        course.setId(generatedId); // Update the course object with generated ID
+                        course.setId(generatedId);
                         System.out.println("✓ Course inserted with ID: " + generatedId);
                         return generatedId;
                     }
@@ -86,7 +96,6 @@ public class DatabaseHelper {
             }
         } catch (SQLException e) {
             System.err.println("✗ Insert failed: " + e.getMessage());
-            e.printStackTrace();
         }
         return -1;
     }
@@ -113,7 +122,6 @@ public class DatabaseHelper {
             return success;
         } catch (SQLException e) {
             System.err.println("✗ Update failed: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -134,7 +142,6 @@ public class DatabaseHelper {
             return success;
         } catch (SQLException e) {
             System.err.println("✗ Delete failed: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -162,34 +169,9 @@ public class DatabaseHelper {
 
         } catch (SQLException e) {
             System.err.println("✗ Failed to load courses: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return courses;
-    }
-
-    public static Course getCourseById(int id) {
-        try (PreparedStatement pstmt = getConnection().prepareStatement(SELECT_COURSE_BY_ID)) {
-            pstmt.setInt(1, id);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Course(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getString("code"),
-                            rs.getDouble("credit"),
-                            rs.getString("teacher1"),
-                            rs.getString("teacher2"),
-                            rs.getString("grade")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("✗ Failed to retrieve course: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public static void closeConnection() {
@@ -200,7 +182,6 @@ public class DatabaseHelper {
             }
         } catch (SQLException e) {
             System.err.println("✗ Failed to close connection: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -211,7 +192,6 @@ public class DatabaseHelper {
             return true;
         } catch (SQLException e) {
             System.err.println("✗ Failed to delete all courses: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -240,9 +220,56 @@ public class DatabaseHelper {
             }
         } catch (SQLException e) {
             System.err.println("✗ Failed to retrieve last course: " + e.getMessage());
-            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void saveResult(double totalCredits, double gpa, double requiredCredits, String coursesJson) {
+        String sql = "INSERT INTO results (total_credits, gpa, required_credits, timestamp, courses_json) VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setDouble(1, totalCredits);
+            pstmt.setDouble(2, gpa);
+            pstmt.setDouble(3, requiredCredits);
+            pstmt.setLong(4, System.currentTimeMillis());
+            pstmt.setString(5, coursesJson);
+
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int id = generatedKeys.getInt(1);
+                        System.out.println("✓ Result saved with ID: " + id);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Failed to save result: " + e.getMessage());
+        }
+    }
+
+    public static Object[] getLastResult() {
+        String sql = "SELECT total_credits, gpa, required_credits, courses_json FROM results ORDER BY id DESC LIMIT 1";
+
+        try (PreparedStatement pstmt = getConnection().prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                Object[] result = new Object[4];
+                result[0] = rs.getDouble("total_credits");
+                result[1] = rs.getDouble("gpa");
+                result[2] = rs.getDouble("required_credits");
+                result[3] = rs.getString("courses_json");
+                System.out.println("✓ Last result loaded from database");
+                return result;
+            } else {
+                System.out.println("ℹ No results found in database");
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("✗ Failed to retrieve last result: " + e.getMessage());
             return null;
         }
     }
 }
-

@@ -1,7 +1,5 @@
 package com.example.asif_2207009_gcbuilder;
 
-import com.example.asif_2207009_gcbuilder.DatabaseHelper;
-import com.example.asif_2207009_gcbuilder.Course;
 import javafx.concurrent.Task;
 
 public class CourseUpdate extends Task<Boolean> {

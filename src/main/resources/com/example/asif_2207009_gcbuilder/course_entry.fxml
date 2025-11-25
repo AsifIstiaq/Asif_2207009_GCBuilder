@@ -53,7 +53,6 @@
                 <Button text="Edit Selected" fx:id="updateButton" onAction="#onUpdate" />
                 <Button text="Delete Selected" onAction="#onRemove" />
                 <Separator orientation="VERTICAL" />
-                <Button text="Export Report" onAction="#onExport" />
                 <Button text="Reset All" fx:id="resetButton" onAction="#onReset" />
             </HBox>
 

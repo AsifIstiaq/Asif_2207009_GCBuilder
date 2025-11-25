@@ -34,29 +34,22 @@ public class Course {
 
     public int getId() { return id.get(); }
     public void setId(int value) { id.set(value); }
-    public IntegerProperty idProperty() { return id; }
 
     public String getName() { return name.get(); }
     public void setName(String value) { name.set(value); }
-    public StringProperty nameProperty() { return name; }
 
     public String getCode() { return code.get(); }
     public void setCode(String value) { code.set(value); }
-    public StringProperty codeProperty() { return code; }
 
     public double getCredit() { return credit.get(); }
     public void setCredit(double value) { credit.set(value); }
-    public DoubleProperty creditProperty() { return credit; }
 
     public String getTeacher1() { return teacher1.get(); }
     public void setTeacher1(String value) { teacher1.set(value); }
-    public StringProperty teacher1Property() { return teacher1; }
 
     public String getTeacher2() { return teacher2.get(); }
     public void setTeacher2(String value) { teacher2.set(value); }
-    public StringProperty teacher2Property() { return teacher2; }
 
     public String getGrade() { return grade.get(); }
     public void setGrade(String value) { grade.set(value); }
-    public StringProperty gradeProperty() { return grade; }
 }

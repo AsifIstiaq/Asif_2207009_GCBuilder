@@ -1,6 +1,5 @@
 package com.example.asif_2207009_gcbuilder;
 
-import com.example.asif_2207009_gcbuilder.DatabaseHelper;
 import javafx.concurrent.Task;
 
 public class CourseDelete extends Task<Boolean> {

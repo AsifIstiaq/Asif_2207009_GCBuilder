@@ -13,11 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -59,6 +55,20 @@ public class CourseEntryController {
         setupTableListener();
         loadCoursesFromDatabase();
         loadLastCourse();
+        loadLastRequiredCredits();
+    }
+
+    private void loadLastRequiredCredits() {
+        new Thread(() -> {
+            Object[] lastResult = com.example.asif_2207009_gcbuilder.DatabaseHelper.getLastResult();
+            if (lastResult != null && lastResult[2] != null) {
+                double requiredCredits = (double) lastResult[2];
+                javafx.application.Platform.runLater(() -> {
+                    totalCreditsField.setText(String.valueOf(requiredCredits));
+                    System.out.println("✓ Last required credits loaded: " + requiredCredits);
+                });
+            }
+        }).start();
     }
 
     private void loadCoursesFromDatabase() {
@@ -382,73 +392,6 @@ public class CourseEntryController {
     }
 
     @FXML
-    private void onExport(ActionEvent event) {
-        double required = parseDoubleOrZero(totalCreditsField.getText());
-        double sum = courses.stream().mapToDouble(Course::getCredit).sum();
-        if (courses.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Export", "No courses to export. Add some courses first.");
-            return;
-        }
-
-        if (required <= 0) {
-            showAlert(Alert.AlertType.WARNING, "Export Error",
-                    "Please enter the required credit before exporting.");
-            return;
-        }
-
-        if (Math.abs(sum - required) != 0) {
-            showAlert(Alert.AlertType.WARNING, "Export Error",
-                    "Total course credits do not match the required credit.");
-            return;
-        }
-
-        try {
-            String report = generateReport();
-            String timestamp = System.currentTimeMillis() + "";
-            String filename = "GPA_Report_" + timestamp + ".txt";
-            Files.write(Paths.get(filename), report.getBytes());
-            showAlert(Alert.AlertType.INFORMATION, "Export", "Report exported to " + filename);
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Export Error", "Failed to export: " + e.getMessage());
-        }
-    }
-
-    private String generateReport() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("=".repeat(60)).append("\n");
-        sb.append("GPA CALCULATOR REPORT\n");
-        sb.append("Generated: ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
-        sb.append("=".repeat(60)).append("\n\n");
-
-        double totalCredits = courses.stream().mapToDouble(Course::getCredit).sum();
-        double totalPoints = courses.stream().mapToDouble(c -> c.getCredit() * gradePoints.getOrDefault(c.getGrade(), 0.0)).sum();
-        double gpa = totalCredits > 0 ? totalPoints / totalCredits : 0.0;
-
-        sb.append("COURSES\n");
-        sb.append("-".repeat(60)).append("\n");
-        for (int i = 0; i < courses.size(); i++) {
-            Course c = courses.get(i);
-            double gradePoint = gradePoints.getOrDefault(c.getGrade(), 0.0);
-            double weightedPoints = c.getCredit() * gradePoint;
-            sb.append(String.format("%d. %s (%s)\n", i+1, c.getName(), c.getCode()));
-            sb.append(String.format("   Credit: %.2f | Grade: %s (%.1f points) | Weighted GPA: %.2f\n",
-                    c.getCredit(), c.getGrade(), gradePoint, weightedPoints));
-            sb.append(String.format("   Teachers: %s, %s\n\n", c.getTeacher1(), c.getTeacher2()));
-        }
-
-        sb.append("-".repeat(60)).append("\n");
-        sb.append("SUMMARY\n");
-        sb.append("-".repeat(60)).append("\n");
-        sb.append(String.format("Total Courses: %d\n", courses.size()));
-        sb.append(String.format("Total Credits: %.2f\n", totalCredits));
-        sb.append(String.format("Total Weighted GPA: %.2f\n", totalPoints));
-        sb.append(String.format("GPA: %.2f\n", gpa));
-        sb.append("=".repeat(60)).append("\n");
-
-        return sb.toString();
-    }
-
-    @FXML
     private void onCalculate(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/asif_2207009_gcbuilder/result.fxml"));
         Parent root = loader.load();
@@ -457,12 +400,44 @@ public class CourseEntryController {
         double totalPoints = courses.stream().mapToDouble(c -> c.getCredit() * gradePoints.getOrDefault(c.getGrade(), 0.0)).sum();
         double gpa = totalCredits > 0 ? totalPoints / totalCredits : 0.0;
 
+        double requiredCredits = parseDoubleOrZero(totalCreditsField.getText());
+        String coursesJson = buildCoursesJson(courses, gradePoints);
+        com.example.asif_2207009_gcbuilder.DatabaseHelper.saveResult(totalCredits, gpa, requiredCredits, coursesJson);
+
         controller.setData(courses, totalCredits, gpa, gradePoints);
 
         Scene scene = new Scene(root, 950, 750);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
+    }
+
+    private String buildCoursesJson(ObservableList<Course> courses, Map<String, Double> gradePoints) {
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < courses.size(); i++) {
+            Course c = courses.get(i);
+            double gradePoint = gradePoints.getOrDefault(c.getGrade(), 0.0);
+            double weightedPoints = c.getCredit() * gradePoint;
+
+            if (i > 0) json.append(",");
+            json.append("{")
+                    .append("\"name\":\"").append(escapeJson(c.getName())).append("\",")
+                    .append("\"code\":\"").append(escapeJson(c.getCode())).append("\",")
+                    .append("\"credit\":").append(c.getCredit()).append(",")
+                    .append("\"grade\":\"").append(c.getGrade()).append("\",")
+                    .append("\"gradePoint\":").append(gradePoint).append(",")
+                    .append("\"weightedPoints\":").append(weightedPoints).append(",")
+                    .append("\"teacher1\":\"").append(escapeJson(c.getTeacher1())).append("\",")
+                    .append("\"teacher2\":\"").append(escapeJson(c.getTeacher2())).append("\"")
+                    .append("}");
+        }
+        json.append("]");
+        return json.toString();
+    }
+
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
     }
 
     @FXML
